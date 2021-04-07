@@ -13,17 +13,14 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 const app = express()
 
 app.get('/', (req, res) => {
-    res.send('Hello from free valley its working')
+    res.send('hello from freshvalley its working')
 })
 
 app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 const port = 5000;
-
-
-
 
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -31,15 +28,15 @@ client.connect(err => {
     const productsCollection = client.db("freshValleyStore").collection("products");
     const ordersCollection = client.db("freshValleyStore").collection("orders");
 
-
     console.log('database connected')
 
     app.post("/addProduct", (req, res) => {
-        const products = req.body;
-        productsCollection.insertOne(products)
+        const product = req.body;
+        console.log(product)
+        productsCollection.insertOne(product)
             .then(result => {
-                // console.log(result.insertedCount);
-                res.send(result.insertedCount)
+                console.log(result.insertedCount);
+                res.send(result.insertedCount > 0)
             })
     })
 
@@ -74,7 +71,7 @@ client.connect(err => {
     })
 });
 
-app.listen(port)
+app.listen(process.env.PORT || port)
 
 // working code
 
